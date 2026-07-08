@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;height:100vh;display:flex;flex-direction:column;background:#fff;overflow:hidden}
+#hd{background:#111;padding:12px 16px;flex-shrink:0}
+#hn{color:#fff;font-weight:700;font-size:.9rem}
+#hs{color:#4CAF50;font-size:.69rem;margin-top:2px}
+#log{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;background:#f4f4f4}
+.b,.u{padding:9px 13px;border-radius:12px;font-size:.83rem;line-height:1.65;max-width:88%;white-space:pre-line;word-break:break-word}
+.b{background:#fff;color:#111;border:1px solid #e8e8e8;align-self:flex-start;border-radius:4px 12px 12px 12px}
+.u{background:#4CAF50;color:#fff;align-self:flex-end;border-radius:12px 12px 4px 12px}
+#qs{padding:8px 12px;background:#f4f4f4;display:flex;flex-wrap:wrap;gap:5px;flex-shrink:0}
+.q{background:#fff;border:1px solid #4CAF50;color:#4CAF50;padding:5px 11px;border-radius:20px;font-size:.73rem;cursor:pointer;font-family:Arial;transition:all .15s}
+.q:hover,.q:active{background:#4CAF50;color:#fff}
+#ft{padding:10px 12px;border-top:1px solid #eee;display:flex;gap:8px;background:#fff;flex-shrink:0}
+#inp{flex:1;border:1px solid #ddd;border-radius:22px;padding:9px 14px;font-size:.83rem;font-family:Arial;outline:none}
+#inp:focus{border-color:#4CAF50}
+#snd{width:38px;height:38px;flex-shrink:0;border-radius:50%;background:#4CAF50;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center}
+</style>
+</head>
+<body>
+<div id="hd"><div id="hn">Smart Grid AG</div><div id="hs">Online</div></div>
+<div id="log"></div>
+<div id="qs"></div>
+<div id="ft">
+  <input id="inp" type="text" autocomplete="off">
+  <button id="snd"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+</div>
+
+<script>
+var lang = "de";
+
+var DATA = {
+de:{
+  w:"Gruezi! Ich bin der Assistent von Smart Grid AG.\nWie kann ich Ihnen helfen?",
+  p:"Ihre Frage...",
+  f:"Vielen Dank. Bitte kontaktieren Sie uns:\nBuero: 044 555 81 88\nMobil: 076 399 99 62\nEmail: smartgridag@gmail.com",
+  ql:["Leistungen","Kontakt","Smart Meter","E-Mobility","Notfall","Offerte"],
+  qq:["Was bieten Sie an?","Kontakt und Telefon","Smart Meter Techniker","E-Mobility Ladestation","Notfall Stoerung","Offerte anfordern"],
+  kb:[
+    ["leistung|service|angebot|bieten|anbieten|was macht","Unsere Leistungen:\n\n- Smart Meter Techniker\n- Wartung Verteilkabinen\n- E-Mobility Ladestationen\n- Schutz und Steueranlagen\n- Repeater Systeme\n- Oeffentliche Beleuchtung\n\nSchweizweit - aus einer Hand."],
+    ["kontakt|telefon|email|erreichen|nummer|anruf|schreiben","Buero: 044 555 81 88\nMobil: 076 399 99 62\nEmail: smartgridag@gmail.com\nWeb: www.smartgridag.ch\n\nAntwort innerhalb 24h."],
+    ["smart meter|zaehler|stromzaehler|messung|digitaler zaehler","Zertifizierte Smart Meter Techniker.\nInstallation, Inbetriebnahme und Wartung schweizweit.\n\nTel: 044 555 81 88"],
+    ["e-mobility|ladestation|elektroauto|wallbox|laden|elektro","Ladestationen fuer Elektrofahrzeuge.\nEinzeloesung bis Flotten-Infrastruktur.\n\nTel: 044 555 81 88"],
+    ["beleuchtung|lampe|licht|led|strassenlampe","Modernisierung und Wartung von Strassenbeleuchtungsanlagen schweizweit."],
+    ["verteilkabine|kabine|verteiler|niederspannung","Wartung und Inspektion von Niederspannungs-Verteilkabinen fuer sicheren Betrieb."],
+    ["notfall|stoerung|dringend|ausfall|nacht|wochenende","Fuer Notfaelle:\nMobil: 076 399 99 62\n\nWir reagieren schnell - auch ausserhalb Buerozeiten."],
+    ["preis|kosten|offerte|was kostet|tarif|angebot","Fuer eine Offerte:\nTel: 044 555 81 88\nEmail: smartgridag@gmail.com\n\nWir erstellen ein individuelles Angebot."],
+    ["wo|meilen|zuerich|schweiz|region|taetig|einsatz","Hauptsitz: Meilen, Kanton Zuerich.\nTaetig in der ganzen Schweiz."],
+    ["schutz|steuer|relais|automation|steueranlage","Projektierung von Schutzrelais und Steuerungssystemen nach Schweizer Normen."],
+    ["repeater|funk|netzwerk|daten|signal|uebertragung","Repeater-Systeme fuer zuverlaessige Datenuebertragung in Smart Meter Netzwerken."],
+    ["impressum|adresse|uid|firma|registriert","Smart Grid AG\nIn der Au 44\n8706 Meilen\nCH-Schweiz\nUID: CHE-442.994.102"],
+    ["hallo|gruezi|guten tag|guten morgen|hi|hey","Gruezi! Wie kann ich Ihnen helfen?"],
+    ["danke|vielen dank|besten dank|danke vielmals","Sehr gern! Fuer weitere Fragen stehen wir jederzeit zur Verfuegung.\nTel: 044 555 81 88"]
+  ]
+},
+en:{
+  w:"Hello! I am the Smart Grid AG assistant.\nHow can I help you?",
+  p:"Your question...",
+  f:"Thank you. Please contact us:\nOffice: 044 555 81 88\nMobile: 076 399 99 62\nEmail: smartgridag@gmail.com",
+  ql:["Services","Contact","Smart Meter","E-Mobility","Emergency","Quote"],
+  qq:["What services do you offer?","Contact and phone","Smart Meter technician","E-Mobility charging station","Emergency breakdown","Request a quote"],
+  kb:[
+    ["service|offer|provide|what do you|what can","Our services:\n\n- Smart Meter Technician\n- Distribution Cabinet Maintenance\n- E-Mobility Charging Stations\n- Protection and Control Systems\n- Repeater Systems\n- Public Lighting\n\nAll from one source - across Switzerland."],
+    ["contact|phone|email|reach|number|call","Office: 044 555 81 88\nMobile: 076 399 99 62\nEmail: smartgridag@gmail.com\nWeb: www.smartgridag.ch"],
+    ["smart meter|meter|electricity meter|digital meter","Certified smart meter technicians.\nInstallation, commissioning and maintenance across Switzerland.\n\nPhone: 044 555 81 88"],
+    ["e-mobility|charging|electric car|wallbox|ev station","EV charging stations.\nFrom single home solution to fleet infrastructure.\n\nPhone: 044 555 81 88"],
+    ["lighting|lamp|light|led|street light","Modernisation and maintenance of street lighting systems across Switzerland."],
+    ["distribution|cabinet|low voltage","Maintenance and inspection of low-voltage distribution cabinets."],
+    ["emergency|breakdown|urgent|failure|night","For emergencies:\nMobile: 076 399 99 62\n\nWe respond quickly - outside office hours too."],
+    ["price|cost|quote|how much|tariff","For a quote:\nPhone: 044 555 81 88\nEmail: smartgridag@gmail.com"],
+    ["where|location|switzerland|zurich|area","Based in Meilen, Canton Zurich.\nOperating across Switzerland."],
+    ["legal|address|uid|company|registered","Smart Grid AG\nIn der Au 44\n8706 Meilen\nSwitzerland\nUID: CHE-442.994.102"],
+    ["hello|hi|good morning|good day","Hello! How can I help you?"],
+    ["thank|thanks|thank you","You are welcome! We are always here for you.\nPhone: 044 555 81 88"]
+  ]
+},
+fr:{
+  w:"Bonjour! Je suis l assistant de Smart Grid AG.\nComment puis-je vous aider?",
+  p:"Votre question...",
+  f:"Merci. Contactez-nous:\nTel: 044 555 81 88\nMobile: 076 399 99 62\nEmail: smartgridag@gmail.com",
+  ql:["Services","Contact","Smart Meter","E-Mobilite","Urgence","Devis"],
+  qq:["Quels services proposez-vous?","Contact et telephone","Technicien Smart Meter","Borne de recharge","Urgence panne","Demander un devis"],
+  kb:[
+    ["service|offre|proposez|prestation|que faites","Nos services:\n\n- Technicien Smart Meter\n- Maintenance Armoires\n- Bornes E-Mobilite\n- Systemes de Protection\n- Systemes Repeteurs\n- Eclairage Public\n\nPartout en Suisse."],
+    ["contact|telephone|email|joindre|numero|appel","Tel: 044 555 81 88\nMobile: 076 399 99 62\nEmail: smartgridag@gmail.com\nWeb: www.smartgridag.ch"],
+    ["smart meter|compteur|mesure|compteur electrique","Techniciens smart meter certifies.\nInstallation, mise en service et maintenance.\n\nTel: 044 555 81 88"],
+    ["borne|recharge|electrique|voiture|wallbox","Bornes de recharge pour vehicules electriques.\n\nTel: 044 555 81 88"],
+    ["eclairage|lampe|lumiere|led|rue","Modernisation et maintenance des systemes d eclairage public."],
+    ["armoire|distribution|basse tension","Maintenance et inspection des armoires de distribution basse tension."],
+    ["urgence|panne|urgent|defaillance","Urgences:\nMobile: 076 399 99 62\n\nIntervention rapide meme hors heures bureau."],
+    ["devis|prix|cout|tarif","Pour un devis:\nTel: 044 555 81 88\nEmail: smartgridag@gmail.com"],
+    ["ou|suisse|zurich|region","Siege: Meilen, Canton de Zurich.\nActif dans toute la Suisse."],
+    ["mentions|adresse|uid|entreprise","Smart Grid AG\nIn der Au 44\n8706 Meilen\nCH-Suisse\nUID: CHE-442.994.102"],
+    ["bonjour|salut|bonsoir","Bonjour! Comment puis-je vous aider?"],
+    ["merci|grand merci","Avec plaisir!\nTel: 044 555 81 88"]
+  ]
+},
+it:{
+  w:"Buongiorno! Sono l assistente di Smart Grid AG.\nCome posso aiutarla?",
+  p:"La sua domanda...",
+  f:"Grazie. Ci contatti:\nTel: 044 555 81 88\nMobile: 076 399 99 62\nEmail: smartgridag@gmail.com",
+  ql:["Servizi","Contatto","Smart Meter","E-Mobility","Emergenza","Preventivo"],
+  qq:["Quali servizi offrite?","Contatto e telefono","Tecnico Smart Meter","Colonnina di ricarica","Emergenza guasto","Richiedere preventivo"],
+  kb:[
+    ["servizi|offerta|cosa fate|prestate|fornite","I nostri servizi:\n\n- Tecnico Smart Meter\n- Manutenzione Quadri\n- Colonnine E-Mobility\n- Sistemi di Protezione\n- Sistemi Ripetitori\n- Illuminazione Pubblica\n\nIn tutta la Svizzera."],
+    ["contatto|telefono|email|raggiungere|numero","Tel: 044 555 81 88\nMobile: 076 399 99 62\nEmail: smartgridag@gmail.com\nWeb: www.smartgridag.ch"],
+    ["smart meter|contatore|misura|contatore elettrico","Tecnici smart meter certificati.\nInstallazione, messa in servizio e manutenzione.\n\nTel: 044 555 81 88"],
+    ["colonnina|ricarica|elettrico|auto elettrica|wallbox","Colonnine di ricarica per veicoli elettrici.\n\nTel: 044 555 81 88"],
+    ["illuminazione|lampada|luce|led|stradale","Modernizzazione e manutenzione impianti di illuminazione pubblica."],
+    ["quadro|distribuzione|bassa tensione","Manutenzione e ispezione dei quadri di distribuzione a bassa tensione."],
+    ["emergenza|guasto|urgente|fuori orario","Emergenze:\nMobile: 076 399 99 62\n\nInterveniamo rapidamente."],
+    ["preventivo|prezzo|costo|tariffa","Per un preventivo:\nTel: 044 555 81 88\nEmail: smartgridag@gmail.com"],
+    ["dove|svizzera|zurigo|regione","Sede: Meilen, Canton Zurigo.\nOperativi in tutta la Svizzera."],
+    ["note legali|indirizzo|uid|azienda","Smart Grid AG\nIn der Au 44\n8706 Meilen\nCH-Svizzera\nUID: CHE-442.994.102"],
+    ["buongiorno|salve|ciao|buonasera","Buongiorno! Come posso aiutarla?"],
+    ["grazie|molte grazie","Prego! Siamo sempre a sua disposizione.\nTel: 044 555 81 88"]
+  ]
+}
+};
+
+function getData() { return DATA[lang] || DATA.de; }
+
+function addMsg(txt, cls) {
+  var d = document.getElementById("log");
+  var el = document.createElement("div");
+  el.className = cls;
+  el.textContent = txt;
+  d.appendChild(el);
+  d.scrollTop = d.scrollHeight;
+}
+
+function getAnswer(txt) {
+  var low = txt.toLowerCase();
+  var data = getData();
+  for (var i = 0; i < data.kb.length; i++) {
+    var keys = data.kb[i][0].split("|");
+    for (var j = 0; j < keys.length; j++) {
+      if (low.indexOf(keys[j]) !== -1) return data.kb[i][1];
+    }
+  }
+  return data.f;
+}
+
+function send() {
+  var inp = document.getElementById("inp");
+  var txt = inp.value.trim();
+  if (!txt) return;
+  inp.value = "";
+  document.getElementById("qs").innerHTML = "";
+  addMsg(txt, "u");
+  setTimeout(function() { addMsg(getAnswer(txt), "b"); }, 350);
+}
+
+function buildUI() {
+  var data = getData();
+  document.getElementById("log").innerHTML = "";
+  document.getElementById("inp").placeholder = data.p;
+  addMsg(data.w, "b");
+  var qs = document.getElementById("qs");
+  qs.innerHTML = "";
+  for (var i = 0; i < data.ql.length; i++) {
+    (function(label, query) {
+      var btn = document.createElement("button");
+      btn.className = "q";
+      btn.textContent = label;
+      btn.onclick = function() {
+        document.getElementById("qs").innerHTML = "";
+        addMsg(query, "u");
+        setTimeout(function() { addMsg(getAnswer(query), "b"); }, 350);
+      };
+      qs.appendChild(btn);
+    })(data.ql[i], data.qq[i]);
+  }
+}
+
+// Receive language from parent
+window.addEventListener("message", function(e) {
+  if (e.data && e.data.lang) {
+    lang = e.data.lang;
+    buildUI();
+  }
+});
+
+document.getElementById("snd").onclick = send;
+document.getElementById("inp").addEventListener("keydown", function(e) {
+  if (e.key === "Enter") send();
+});
+
+buildUI();
+</script>
+</body>
+</html>
